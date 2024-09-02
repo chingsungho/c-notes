@@ -1,0 +1,21 @@
+CFLAGS += -I. -fPIC -O2 -DNDEBUG $(OPTFLAGS)
+LDFLAGS += -lm $(OPTLIBS)
+
+all: use
+
+# $@ 
+# $^ all dependency Files
+# $< first dependency Files
+
+use: use.o libso.a
+	cc -o $@ $< $(LDFLAGS) -L. -l:libso.a
+
+libso.a: so.o
+	ar crv $@ $^
+
+dev: CFLAGS = -I. -fPIC -g -O2 -rdynamic $(OPTFLAGS)
+dev: all
+
+.PHONY: clean
+clean:
+	-rm use use.o so.o libso.a

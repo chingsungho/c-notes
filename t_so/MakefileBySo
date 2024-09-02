@@ -1,0 +1,21 @@
+CFLAGS += -I. -fPIC -O2 -DNDEBUG $(OPTFLAGS)
+LDFLAGS += -lm $(OPTLIBS)
+
+all: use
+
+# $@ 表示目标文件
+# $^ 表示所有的依赖文件
+# $< 表示第一个依赖文件
+
+use: use.o libso.so
+	cc -o $@ $< $(LDFLAGS) -L. -lso -Wl,-rpath,'$$ORIGIN'
+
+libso.so: so.o
+	cc -o $@ $^ $(LDFLAGS) -shared
+
+dev: CFLAGS = -I. -fPIC -g -O2 -rdynamic $(OPTFLAGS)
+dev: all
+
+.PHONY: clean
+clean:
+	-rm use use.o so.o libso.so
